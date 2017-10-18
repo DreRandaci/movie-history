@@ -21,23 +21,25 @@ const retrieveKeys = () => {
     });
 };
 
-module.exports = {retrieveKeys, apiKeys};
+module.exports = {retrieveKeys};
 },{"./tmdb":5}],2:[function(require,module,exports){
 'use strict';
 
-const domString = (movies) => {
-    $('#movies').html('');
+const domString = (movies, images) => {   
+    // console.log('images:', images);            
+    // console.log('movies:', movies);            
     let str = '';
-    movies.forEach((mv, i) => {
+    movies.forEach((mv, i) => {                
+        // console.log('movies[i].posterpath:', movies[i].poster_path);  
         if (i % 3 === 0) {
             str += `<div class="row">`;
         }
         str += `<div class="col-sm-6 col-md-4">`;
         str +=   `<div class="thumbnail">`;
-        str +=     `<img src="" alt="">`;
+        str +=     `<img src="${images.base_url}w342${movies[i].poster_path}" alt="">`;
         str +=     `<div class="caption">`;
-        str +=       `<h3>${mv.title}</h3>`;
-        str +=       `<p>${mv.overview}</p>`;        
+        str +=       `<h3>${movies[i].title}</h3>`;
+        str +=       `<p>${movies[i].overview}</p>`;        
         str +=       `<p><a href="#" class="btn btn-primary" role="button">Review</a> <a href="#" class="btn btn-default" role="button">Watch List</a></p>`;
         str +=     `</div>`;
         str +=   `</div>`;
@@ -49,11 +51,15 @@ const domString = (movies) => {
     printToDom(str);
 };
 
+const clearDom = () => {
+    $('#movies').empty();
+};
+
 const printToDom = (mvs) => {
     $('#movies').append(mvs);
 };
 
-module.exports = {domString};
+module.exports = {domString, clearDom};
 },{}],3:[function(require,module,exports){
 'use strict';
 
@@ -87,15 +93,34 @@ $(document).ready(function() {
 const dom = require('./dom');
 
 let tmdbKey;
+let imgConfig;
 
 const searchTMDB = (query) => {    
     return new Promise((resolve, reject) => {
         $.ajax(`https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&language=en-US&page=1&include_adult=false&query=${query}`
     ).done((data) => {
-        resolve(data);        
+        resolve(data.results);        
     }).fail((error) => {
         reject(error);
         });        
+    });
+};
+
+const tmdbConfiguration = () => {
+    return new Promise((resolve, reject) => {
+        $.ajax(`https://api.themoviedb.org/3/configuration?api_key=${tmdbKey}`).done((data) => {
+        resolve(data.images);
+        }).fail((error) => {
+            reject(error);
+        });
+    });
+};
+
+const getConfig = () => {    
+    tmdbConfiguration().then((results) => {                
+        imgConfig = results;        
+    }).catch((error) => {
+        console.log('error in getConfig:', error);
     });
 };
 
@@ -109,10 +134,12 @@ const searchMovies = (query) => {
 
 const setKey = (apiKey) => {
     tmdbKey = apiKey;
+    getConfig();
 };
 
 const showResults = (mvAr) => {
-    dom.domString(mvAr.results);
+    dom.clearDom();
+    dom.domString(mvAr, imgConfig);
 };
 
 module.exports = {searchMovies, setKey};
