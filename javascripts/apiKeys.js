@@ -20,4 +20,4 @@ const retrieveKeys = () => {
     });
 };
 
-module.exports = {retrieveKeys, apiKeys};
+module.exports = {retrieveKeys};
