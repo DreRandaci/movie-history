@@ -1,6 +1,7 @@
 'use strict';
 
 const domString = (movies) => {
+    $('#movies').html('');
     let str = '';
     movies.forEach((mv, i) => {
         if (i % 3 === 0) {
@@ -8,7 +9,7 @@ const domString = (movies) => {
         }
         str += `<div class="col-sm-6 col-md-4">`;
         str +=   `<div class="thumbnail">`;
-        str +=     `<img src="${mv.poster_path}" alt="">`;
+        str +=     `<img src="" alt="">`;
         str +=     `<div class="caption">`;
         str +=       `<h3>${mv.title}</h3>`;
         str +=       `<p>${mv.overview}</p>`;        
