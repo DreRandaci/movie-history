@@ -11,7 +11,7 @@
         <link rel="stylesheet" type="text/css" href="./styles/main.css">
 </head>
 <body>
-        <nav class="navbar navbar-inverse">
+        <nav class="navbar navbar-default">
                 <div class="container-fluid">
                   <!-- Brand and toggle get grouped for better mobile display -->
                   <div class="navbar-header">
@@ -25,29 +25,39 @@
                   </div>
               
                   <!-- Collect the nav links, forms, and other content for toggling -->
-                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">                    
-                    <form class="navbar-form navbar-right">
-                      <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search Movies">
-                      </div>
-                      <button type="submit" class="btn btn-default">Search</button>
-                    </form>
+                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">                                        
                     <ul class="nav navbar-nav navbar-right">
-                      <li><a href="#">Authentication</a></li>
-                      <li><a href="#">My Movies</a></li>
+                      <li><a id='authentication'>Authentication</a></li>
+                      <li><a id='search'>Search</a></li>
+                      <li><a id='myMovies'>My Movies</a></li>
                     </ul>
                   </div><!-- /.navbar-collapse -->
                 </div><!-- /.container-fluid -->
               </nav>
 
-            <div class='container'>
+            <div id='movies' class='container'></div>
+            
+            <div id='myMoviesContainer' class='text-center hide'>
+              <h1>My Movies</h1>
+              <div id='moviesMine'></div>
+            </div>
+            
+            <div id='searchContainer' class='text-center hide'>
+              <div class='container'>
                 <div class="col-xs-6 col-xs-offset-3 input-group input-group-lg">
                     <span class="glyphicon glyphicon-search input-group-addon" id="sizing-addon1"></span>
                     <input id='searchBar' type="text" class="form-control" placeholder="Search Movies" aria-describedby="sizing-addon1">
                 </div>
+              </div>
             </div>
-
-            <div id='movies' class='container'></div>
+            
+            <div id='authScreenContainer' class='text-center'>
+              <h1>Sign In</h1>
+              <button class='btn btn-lg btn-default' id='googleBtn'>
+                  <img src="https://i.stack.imgur.com/XzoRm.png">
+              </button>              
+            </div>
+          
              
 
     <script type="text/javascript" src="./lib/node_modules/jquery/dist/jquery.js"></script>

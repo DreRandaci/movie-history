@@ -12,4 +12,22 @@ const pressEnter = () => {
     });        
 };
 
-module.exports = {pressEnter};
+const myLinks = () => {
+    $('.navbar-collapse').click(( e ) => {
+        if (e.target.id === 'myMovies') {
+            $('#searchContainer').addClass('hide');
+            $('#myMoviesContainer').removeClass('hide');
+            $('#authScreenContainer').addClass('hide');
+        } else if (e.target.id === 'authentication') {
+            $('#searchContainer').addClass('hide');
+            $('#myMoviesContainer').addClass('hide');
+            $('#authScreenContainer').removeClass('hide');
+        } else if (e.target.id === 'search') {
+            $('#searchContainer').removeClass('hide');
+            $('#myMoviesContainer').addClass('hide');
+            $('#authScreenContainer').addClass('hide');
+        }
+    });
+};
+
+module.exports = { pressEnter, myLinks };

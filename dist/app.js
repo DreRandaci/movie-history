@@ -25,12 +25,9 @@ module.exports = {retrieveKeys};
 },{"./tmdb":5}],2:[function(require,module,exports){
 'use strict';
 
-const domString = (movies, images) => {   
-    // console.log('images:', images);            
-    // console.log('movies:', movies);            
+const domString = (movies, images) => {                   
     let str = '';
-    movies.forEach((mv, i) => {                
-        // console.log('movies[i].posterpath:', movies[i].poster_path);  
+    movies.forEach((mv, i) => {                        
         if (i % 3 === 0) {
             str += `<div class="row">`;
         }
@@ -59,7 +56,7 @@ const printToDom = (mvs) => {
     $('#movies').append(mvs);
 };
 
-module.exports = {domString, clearDom};
+module.exports = { domString, clearDom };
 },{}],3:[function(require,module,exports){
 'use strict';
 
@@ -75,7 +72,25 @@ const pressEnter = () => {
     });        
 };
 
-module.exports = {pressEnter};
+const myLinks = () => {
+    $('.navbar-collapse').click(( e ) => {
+        if (e.target.id === 'myMovies') {
+            $('#searchContainer').addClass('hide');
+            $('#myMoviesContainer').removeClass('hide');
+            $('#authScreenContainer').addClass('hide');
+        } else if (e.target.id === 'authentication') {
+            $('#searchContainer').addClass('hide');
+            $('#myMoviesContainer').addClass('hide');
+            $('#authScreenContainer').removeClass('hide');
+        } else if (e.target.id === 'search') {
+            $('#searchContainer').removeClass('hide');
+            $('#myMoviesContainer').addClass('hide');
+            $('#authScreenContainer').addClass('hide');
+        }
+    });
+};
+
+module.exports = { pressEnter, myLinks };
 },{"./tmdb":5}],4:[function(require,module,exports){
 'use strict';
 
@@ -85,6 +100,7 @@ const apiKeys = require('./apiKeys');
 $(document).ready(function() {
     apiKeys.retrieveKeys();
     events.pressEnter();
+    events.myLinks();
 });
 
 },{"./apiKeys":1,"./events":3}],5:[function(require,module,exports){
