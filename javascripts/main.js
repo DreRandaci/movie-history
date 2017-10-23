@@ -6,4 +6,5 @@ const apiKeys = require('./apiKeys');
 $(document).ready(function() {
     apiKeys.retrieveKeys();
     events.pressEnter();
+    events.myLinks();
 });

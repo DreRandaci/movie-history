@@ -1,11 +1,8 @@
 'use strict';
 
-const domString = (movies, images) => {   
-    // console.log('images:', images);            
-    // console.log('movies:', movies);            
+const domString = (movies, images) => {                   
     let str = '';
-    movies.forEach((mv, i) => {                
-        // console.log('movies[i].posterpath:', movies[i].poster_path);  
+    movies.forEach((mv, i) => {                        
         if (i % 3 === 0) {
             str += `<div class="row">`;
         }
@@ -34,4 +31,4 @@ const printToDom = (mvs) => {
     $('#movies').append(mvs);
 };
 
-module.exports = {domString, clearDom};
+module.exports = { domString, clearDom };
