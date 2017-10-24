@@ -2,6 +2,7 @@
 
 const tmdb = require('./tmdb');
 const firebaseApi = require('./firebaseApi');
+const dom = require('./dom');
 
 const pressEnter = () => {    
     $(document).keypress((e) => {
@@ -19,7 +20,13 @@ const myLinks = () => {
             $('#searchContainer').addClass('hide');
             $('#myMoviesContainer').removeClass('hide');
             $('#authScreenContainer').addClass('hide');
-        } else if (e.target.id === 'authentication') {
+            firebaseApi.getMovieList().then((results) => {
+                dom.clearDom('moviesMine');
+                dom.domString(results, tmdb.getImgConfig(), 'moviesMine');
+            }).catch((err) => {
+                console.log("error in getMovieList", err);
+            });
+        } else if (e.target.id === 'authentication') {            
             $('#searchContainer').addClass('hide');
             $('#myMoviesContainer').addClass('hide');
             $('#authScreenContainer').removeClass('hide');
