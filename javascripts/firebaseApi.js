@@ -20,4 +20,22 @@ let authenticateGoogle = () => {
     });
   };
 
-module.exports = { setKey, authenticateGoogle };
+const getMovieList = () => {
+    let moviesArray = [];
+    return new Promise(( resolve, reject ) => {
+        $.ajax(`${firebaseKey.databaseURL}/movies.json?orderBy="uid"&equalTo="${userUid}"`).then((fbMovies) => {
+            if (fbMovies != null) {
+            Object.keys(fbMovies).forEach(( key ) => {
+                fbMovies[key].id = key;
+                moviesArray.push(fbMovies[key]);
+            });
+        }
+
+            resolve(moviesArray);
+        }).catch(( err ) => {
+
+        });
+    });
+};
+
+module.exports = { setKey, authenticateGoogle, getMovieList };
