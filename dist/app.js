@@ -64,6 +64,7 @@ module.exports = { domString, clearDom };
 'use strict';
 
 const tmdb = require('./tmdb');
+const firebaseApi = require('./firebaseApi');
 
 const pressEnter = () => {    
     $(document).keypress((e) => {
@@ -93,17 +94,41 @@ const myLinks = () => {
     });
 };
 
-module.exports = { pressEnter, myLinks };
-},{"./tmdb":6}],4:[function(require,module,exports){
+const googleAuth = () => {
+    $("#googleBtn").click( ( e ) => {
+        firebaseApi.authenticateGoogle().then(( result ) => {
+            console.log('result', result);
+        }).catch(( error ) => {
+            console.log('error in authenticateGoogle');
+        });
+    });
+};
+
+module.exports = { pressEnter, myLinks, googleAuth };
+},{"./firebaseApi":4,"./tmdb":6}],4:[function(require,module,exports){
 'use strict';
 
 let firebaseKey = '';
+let userUid = '';
 
-const setKey = (key) => {
+const setKey = ( key ) => {
     firebaseKey = key;
 };
 
-module.exports = {setKey};
+let authenticateGoogle = () => {
+    return new Promise(( resolve, reject ) => {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+        .then((authData) => {
+        	userUid = authData.user.uid;
+            resolve(authData.user);
+        }).catch((error) => {
+            reject(error);
+        });
+    });
+  };
+
+module.exports = { setKey, authenticateGoogle };
 },{}],5:[function(require,module,exports){
 'use strict';
 
@@ -111,9 +136,10 @@ const events = require('./events');
 const apiKeys = require('./apiKeys');
 
 $(document).ready(function() {
-    apiKeys.retrieveKeys();
-    events.pressEnter();
+    apiKeys.retrieveKeys();    
     events.myLinks();
+    events.googleAuth();
+    events.pressEnter();
 });
 
 },{"./apiKeys":1,"./events":3}],6:[function(require,module,exports){
