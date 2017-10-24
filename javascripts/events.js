@@ -1,6 +1,7 @@
 'use strict';
 
 const tmdb = require('./tmdb');
+const firebaseApi = require('./firebaseApi');
 
 const pressEnter = () => {    
     $(document).keypress((e) => {
@@ -30,4 +31,14 @@ const myLinks = () => {
     });
 };
 
-module.exports = { pressEnter, myLinks };
+const googleAuth = () => {
+    $("#googleBtn").click( ( e ) => {
+        firebaseApi.authenticateGoogle().then(( result ) => {
+            console.log('result', result);
+        }).catch(( error ) => {
+            console.log('error in authenticateGoogle');
+        });
+    });
+};
+
+module.exports = { pressEnter, myLinks, googleAuth };
