@@ -34,13 +34,16 @@ const domString = (movies, images, divName) => {
         if (i % 3 === 0) {
             str += `<div class="row">`;
         }
-        str += `<div class="col-sm-6 col-md-4">`;
+        str += `<div class="col-sm-6 col-md-4 movie">`;
         str +=   `<div class="thumbnail">`;
-        str +=     `<img src="${images.base_url}w342${movies[i].poster_path}" alt="">`;
+        str +=     `<img class='poster_path' src="${images.base_url}/w342/${movies[i].poster_path}" alt="">`;
         str +=     `<div class="caption">`;
-        str +=       `<h3>${movies[i].title}</h3>`;
-        str +=       `<p>${movies[i].overview}</p>`;        
-        str +=       `<p><a href="#" class="btn btn-primary" role="button">Review</a> <a href="#" class="btn btn-default" role="button">Watch List</a></p>`;
+        str +=       `<h3 class='title'>${movies[i].title}</h3>`;
+        str +=       `<p class='overview'>${movies[i].overview}</p>`;        
+        str +=       `<p>`; 
+        str +=       `<a href="#" class="btn btn-primary" role="button">Review</a>`;
+        str +=       `<a class="wishlist btn btn-default" role="button">Wishlist</a>`;
+        str +=       `</p>`;
         str +=     `</div>`;
         str +=   `</div>`;
         str += `</div>`;
@@ -104,14 +107,32 @@ const myLinks = () => {
 const googleAuth = () => {
     $("#googleBtn").click( ( e ) => {
         firebaseApi.authenticateGoogle().then(( result ) => {
-            console.log('result', result);
+            
         }).catch(( error ) => {
             console.log('error in authenticateGoogle');
         });
     });
 };
 
-module.exports = { pressEnter, myLinks, googleAuth };
+const wishListEvents = () => {
+    $('body').on('click', '.wishlist', (e) => {
+        // console.log('wishlist e:', e.target.closest('.movie'));
+        let mommy = e.target.closest('.movie');        
+
+        let newMovie = {
+            "title": $(mommy).find('.title').html(),
+            "overview": $(mommy).find('.overview').html(),
+            "poster_path": $(mommy).find('.poster_path').attr('src').split('/').pop(),
+            "rating": 0,
+            "isWatched": false,
+            "uid": ""
+        };
+        console.log("newMovie:", newMovie);
+        //firebaseApi.saveMovie().then().catch();
+    });
+};
+
+module.exports = { pressEnter, myLinks, googleAuth, wishListEvents };
 },{"./dom":2,"./firebaseApi":4,"./tmdb":6}],4:[function(require,module,exports){
 'use strict';
 
@@ -165,6 +186,7 @@ $(document).ready(function() {
     events.myLinks();
     events.googleAuth();
     events.pressEnter();
+    events.wishListEvents();
 });
 
 },{"./apiKeys":1,"./events":3}],6:[function(require,module,exports){
@@ -205,7 +227,6 @@ const getConfig = () => {
 };
 
 const searchMovies = (query) => {
-    console.log("firebase apps?", firebase.apps);
     searchTMDB(query).then((resuts) => {
         showResults(resuts);
     }).catch((error) => {
