@@ -28,7 +28,7 @@ module.exports = { retrieveKeys };
 },{"./firebaseApi":4,"./tmdb":6}],2:[function(require,module,exports){
 'use strict';
 
-const domString = (movies, images, divName) => {                   
+const domString = (movies, images, divName, search) => {                   
     let str = '';
     movies.forEach((mv, i) => {                        
         if (i % 3 === 0) {
@@ -36,14 +36,21 @@ const domString = (movies, images, divName) => {
         }
         str += `<div class="col-sm-6 col-md-4 movie">`;
         str +=   `<div class="thumbnail">`;
+            if (!search) {
+                str +=   `<button class='btn btn-default delete' data-firebase-id='${movies[i].id}'>X</button>`;
+            }
         str +=     `<img class='poster_path' src="${images.base_url}/w342/${movies[i].poster_path}" alt="">`;
         str +=     `<div class="caption">`;
         str +=       `<h3 class='title'>${movies[i].title}</h3>`;
-        str +=       `<p class='overview'>${movies[i].overview}</p>`;        
+        str +=       `<p class='overview'>${movies[i].overview}</p>`; 
+            if (search) {       
         str +=       `<p>`; 
         str +=       `<a class="review btn btn-primary" role="button">Review</a>`;
         str +=       `<a class="wishlist btn btn-default" role="button">Wishlist</a>`;
         str +=       `</p>`;
+            } else {
+                str += `<p>Rating: ${movies[i].rating}</p>`;
+            }
         str +=     `</div>`;
         str +=   `</div>`;
         str += `</div>`;
@@ -80,18 +87,22 @@ const pressEnter = () => {
     });        
 };
 
+const getMahMovies = () => {
+    firebaseApi.getMovieList().then((results) => {
+        dom.clearDom('moviesMine');
+        dom.domString(results, tmdb.getImgConfig(), 'moviesMine', false);
+    }).catch((err) => {
+        console.log("error in getMovieList:", err);
+    });
+};
+
 const myLinks = () => {
     $('.navbar-collapse').click(( e ) => {
         if (e.target.id === 'myMovies') {
             $('#searchContainer').addClass('hide');
             $('#myMoviesContainer').removeClass('hide');
-            $('#authScreenContainer').addClass('hide');
-            firebaseApi.getMovieList().then((results) => {
-                dom.clearDom('moviesMine');
-                dom.domString(results, tmdb.getImgConfig(), 'moviesMine');
-            }).catch((err) => {
-                console.log("error in getMovieList", err);
-            });
+            $('#authScreenContainer').addClass('hide'); 
+            getMahMovies();           
         } else if (e.target.id === 'authentication') {            
             $('#searchContainer').addClass('hide');
             $('#myMoviesContainer').addClass('hide');
@@ -152,12 +163,24 @@ const reviewEvents = () => {
     });
 };
 
+const deleteMovie = () => {
+    $('body').on('click', '.delete', (e) => {
+        let movieId = $(e.target).data('firebase-id');
+        firebaseApi.deleteMovie(movieId).then((results) => {
+            getMahMovies();
+        }).catch((err) => {
+            console.log('error in deleteMovie:', err);
+        });
+    });
+};
+
 const init = () => {
     myLinks();
     googleAuth();
     pressEnter();
     wishListEvents();
     reviewEvents();
+    deleteMovie();
 };
 
 module.exports = { init };
@@ -216,7 +239,20 @@ const saveMovie = (movie) => {
     });
 };
 
-module.exports = { setKey, authenticateGoogle, getMovieList, saveMovie };
+const deleteMovie = (movieId) => {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: "DELETE",
+            url: `${firebaseKey.databaseURL}/movies/${movieId}.json`            
+        }).then((fbMovie) => {
+            resolve(fbMovie);
+        }).catch((err) => {
+            console.log('err in deleteMovie:', err);
+        });
+    });
+};
+
+module.exports = { setKey, authenticateGoogle, getMovieList, saveMovie, deleteMovie };
 },{}],5:[function(require,module,exports){
 'use strict';
 
@@ -280,7 +316,7 @@ const setKey = (apiKey) => {
 
 const showResults = (mvAr) => {
     dom.clearDom("movies");
-    dom.domString(mvAr, imgConfig, "movies");
+    dom.domString(mvAr, imgConfig, "movies", true);
 };
 
 const getImgConfig = () => {
