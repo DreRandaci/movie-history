@@ -49,7 +49,7 @@ const setKey = (apiKey) => {
 
 const showResults = (mvAr) => {
     dom.clearDom("movies");
-    dom.domString(mvAr, imgConfig, "movies");
+    dom.domString(mvAr, imgConfig, "movies", true);
 };
 
 const getImgConfig = () => {
