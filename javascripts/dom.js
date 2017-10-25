@@ -13,7 +13,7 @@ const domString = (movies, images, divName) => {
         str +=       `<h3 class='title'>${movies[i].title}</h3>`;
         str +=       `<p class='overview'>${movies[i].overview}</p>`;        
         str +=       `<p>`; 
-        str +=       `<a href="#" class="btn btn-primary" role="button">Review</a>`;
+        str +=       `<a class="review btn btn-primary" role="button">Review</a>`;
         str +=       `<a class="wishlist btn btn-default" role="button">Wishlist</a>`;
         str +=       `</p>`;
         str +=     `</div>`;
