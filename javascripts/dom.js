@@ -9,7 +9,7 @@ const domString = (movies, images, divName, search) => {
         str += `<div class="col-sm-6 col-md-4 movie">`;
         str +=   `<div class="thumbnail">`;
             if (!search) {
-                str +=   `<button class='btn btn-default' data-firebase-id='${movies[i].id}'>X</button>`;
+                str +=   `<button class='btn btn-default delete' data-firebase-id='${movies[i].id}'>X</button>`;
             }
         str +=     `<img class='poster_path' src="${images.base_url}/w342/${movies[i].poster_path}" alt="">`;
         str +=     `<div class="caption">`;

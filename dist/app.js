@@ -37,7 +37,7 @@ const domString = (movies, images, divName, search) => {
         str += `<div class="col-sm-6 col-md-4 movie">`;
         str +=   `<div class="thumbnail">`;
             if (!search) {
-                str +=   `<button class='btn btn-default' data-firebase-id='${movies[i].id}'>X</button>`;
+                str +=   `<button class='btn btn-default delete' data-firebase-id='${movies[i].id}'>X</button>`;
             }
         str +=     `<img class='poster_path' src="${images.base_url}/w342/${movies[i].poster_path}" alt="">`;
         str +=     `<div class="caption">`;
@@ -87,18 +87,22 @@ const pressEnter = () => {
     });        
 };
 
+const getMahMovies = () => {
+    firebaseApi.getMovieList().then((results) => {
+        dom.clearDom('moviesMine');
+        dom.domString(results, tmdb.getImgConfig(), 'moviesMine', false);
+    }).catch((err) => {
+        console.log("error in getMovieList:", err);
+    });
+};
+
 const myLinks = () => {
     $('.navbar-collapse').click(( e ) => {
         if (e.target.id === 'myMovies') {
             $('#searchContainer').addClass('hide');
             $('#myMoviesContainer').removeClass('hide');
-            $('#authScreenContainer').addClass('hide');
-            firebaseApi.getMovieList().then((results) => {
-                dom.clearDom('moviesMine');
-                dom.domString(results, tmdb.getImgConfig(), 'moviesMine', false);
-            }).catch((err) => {
-                console.log("error in getMovieList", err);
-            });
+            $('#authScreenContainer').addClass('hide'); 
+            getMahMovies();           
         } else if (e.target.id === 'authentication') {            
             $('#searchContainer').addClass('hide');
             $('#myMoviesContainer').addClass('hide');
@@ -159,12 +163,24 @@ const reviewEvents = () => {
     });
 };
 
+const deleteMovie = () => {
+    $('body').on('click', '.delete', (e) => {
+        let movieId = $(e.target).data('firebase-id');
+        firebaseApi.deleteMovie(movieId).then((results) => {
+            getMahMovies();
+        }).catch((err) => {
+            console.log('error in deleteMovie:', err);
+        });
+    });
+};
+
 const init = () => {
     myLinks();
     googleAuth();
     pressEnter();
     wishListEvents();
     reviewEvents();
+    deleteMovie();
 };
 
 module.exports = { init };
@@ -223,7 +239,20 @@ const saveMovie = (movie) => {
     });
 };
 
-module.exports = { setKey, authenticateGoogle, getMovieList, saveMovie };
+const deleteMovie = (movieId) => {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: "DELETE",
+            url: `${firebaseKey.databaseURL}/movies/${movieId}.json`            
+        }).then((fbMovie) => {
+            resolve(fbMovie);
+        }).catch((err) => {
+            console.log('err in deleteMovie:', err);
+        });
+    });
+};
+
+module.exports = { setKey, authenticateGoogle, getMovieList, saveMovie, deleteMovie };
 },{}],5:[function(require,module,exports){
 'use strict';
 
