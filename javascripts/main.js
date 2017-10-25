@@ -8,4 +8,5 @@ $(document).ready(function() {
     events.myLinks();
     events.googleAuth();
     events.pressEnter();
+    events.wishListEvents();
 });

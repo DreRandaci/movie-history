@@ -41,11 +41,29 @@ const myLinks = () => {
 const googleAuth = () => {
     $("#googleBtn").click( ( e ) => {
         firebaseApi.authenticateGoogle().then(( result ) => {
-            console.log('result', result);
+            
         }).catch(( error ) => {
             console.log('error in authenticateGoogle');
         });
     });
 };
 
-module.exports = { pressEnter, myLinks, googleAuth };
+const wishListEvents = () => {
+    $('body').on('click', '.wishlist', (e) => {
+        // console.log('wishlist e:', e.target.closest('.movie'));
+        let mommy = e.target.closest('.movie');        
+
+        let newMovie = {
+            "title": $(mommy).find('.title').html(),
+            "overview": $(mommy).find('.overview').html(),
+            "poster_path": $(mommy).find('.poster_path').attr('src').split('/').pop(),
+            "rating": 0,
+            "isWatched": false,
+            "uid": ""
+        };
+        console.log("newMovie:", newMovie);
+        //firebaseApi.saveMovie().then().catch();
+    });
+};
+
+module.exports = { pressEnter, myLinks, googleAuth, wishListEvents };
