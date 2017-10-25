@@ -41,7 +41,7 @@ const domString = (movies, images, divName) => {
         str +=       `<h3 class='title'>${movies[i].title}</h3>`;
         str +=       `<p class='overview'>${movies[i].overview}</p>`;        
         str +=       `<p>`; 
-        str +=       `<a href="#" class="btn btn-primary" role="button">Review</a>`;
+        str +=       `<a class="review btn btn-primary" role="button">Review</a>`;
         str +=       `<a class="wishlist btn btn-default" role="button">Wishlist</a>`;
         str +=       `</p>`;
         str +=     `</div>`;
@@ -116,9 +116,7 @@ const googleAuth = () => {
 
 const wishListEvents = () => {
     $('body').on('click', '.wishlist', (e) => {
-        // console.log('wishlist e:', e.target.closest('.movie'));
         let mommy = e.target.closest('.movie');        
-
         let newMovie = {
             "title": $(mommy).find('.title').html(),
             "overview": $(mommy).find('.overview').html(),
@@ -135,7 +133,34 @@ const wishListEvents = () => {
     });
 };
 
-module.exports = { pressEnter, myLinks, googleAuth, wishListEvents };
+const reviewEvents = () => {
+    $('body').on('click', '.review', (e) => {
+        let mommy = e.target.closest('.movie');        
+        let newMovie = {
+            "title": $(mommy).find('.title').html(),
+            "overview": $(mommy).find('.overview').html(),
+            "poster_path": $(mommy).find('.poster_path').attr('src').split('/').pop(),
+            "rating": 0,
+            "isWatched": true,
+            "uid": ""
+        };
+        firebaseApi.saveMovie(newMovie).then(() => {
+            $(mommy).remove();
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+};
+
+const init = () => {
+    myLinks();
+    googleAuth();
+    pressEnter();
+    wishListEvents();
+    reviewEvents();
+};
+
+module.exports = { init };
 },{"./dom":2,"./firebaseApi":4,"./tmdb":6}],4:[function(require,module,exports){
 'use strict';
 
@@ -199,11 +224,8 @@ const events = require('./events');
 const apiKeys = require('./apiKeys');
 
 $(document).ready(function() {
-    apiKeys.retrieveKeys();    
-    events.myLinks();
-    events.googleAuth();
-    events.pressEnter();
-    events.wishListEvents();
+    apiKeys.retrieveKeys(); 
+    events.init();       
 });
 
 },{"./apiKeys":1,"./events":3}],6:[function(require,module,exports){

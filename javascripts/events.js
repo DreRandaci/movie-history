@@ -50,9 +50,7 @@ const googleAuth = () => {
 
 const wishListEvents = () => {
     $('body').on('click', '.wishlist', (e) => {
-        // console.log('wishlist e:', e.target.closest('.movie'));
         let mommy = e.target.closest('.movie');        
-
         let newMovie = {
             "title": $(mommy).find('.title').html(),
             "overview": $(mommy).find('.overview').html(),
@@ -69,4 +67,31 @@ const wishListEvents = () => {
     });
 };
 
-module.exports = { pressEnter, myLinks, googleAuth, wishListEvents };
+const reviewEvents = () => {
+    $('body').on('click', '.review', (e) => {
+        let mommy = e.target.closest('.movie');        
+        let newMovie = {
+            "title": $(mommy).find('.title').html(),
+            "overview": $(mommy).find('.overview').html(),
+            "poster_path": $(mommy).find('.poster_path').attr('src').split('/').pop(),
+            "rating": 0,
+            "isWatched": true,
+            "uid": ""
+        };
+        firebaseApi.saveMovie(newMovie).then(() => {
+            $(mommy).remove();
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+};
+
+const init = () => {
+    myLinks();
+    googleAuth();
+    pressEnter();
+    wishListEvents();
+    reviewEvents();
+};
+
+module.exports = { init };
